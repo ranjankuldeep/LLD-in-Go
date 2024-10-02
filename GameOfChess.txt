@@ -1,0 +1,152 @@
+Write code for low level design of game of Chess.
+We have a chessboard with 8x8 squares on it.
+
+A chess board has exactly 6 kinds of pieces:
+K - king, Q- queen, R - rook,
+B - bishop, H - knight (Horse) and P - pawn
+Pieces are of white and black colour.
+
+Below is how the board looks like. White pieces are in row-0 and row-1 and black pieces are at row-7 and row-6 in the beginning.
+
+["WR","WH","WB","WQ","WK","WB","WH","WR"],
+["WP","WP","WP","WP","WP","WP","WP","WP"],
+["","","","","","","",""],
+["","","","","","","",""],
+["","","","","","","",""],
+["","","","","","","",""],
+["BP","BP","BP","BP","BP","BP","BP","BP"],
+["BR","BH","BB","BQ","BK","BB","BH","BR"]
+
+First character is colour and second character is type of piece.
+e.g. WR is white rook, BK is black king and so on.
+We have 1 King, 1 Queen, 2 Knights, 2 Rooks, 2 Bishops, 8 Pawns of both white and black colour
+
+- Chess is played between two players. One player controls white pieces and the other controls black pieces.
+
+- Each piece has its own way of moving on the board (see below). Each player needs to move a piece in each turn.
+
+- A player may move their piece an empty cell or to a
+position currently occupied by a piece of the opponent,
+hence capturing the piece. Players can never capture their own piece.
+
+- The game starts with the player owning the white pieces making the first move.
+After this, the players play alternate turns.
+Game ends when King of either white or black is captured.
+
+Below are the list of moves. An actual chess game may have few additional rules/moves. But for this question you code should only stick to below moves.
+
+King (K): Your main player.
+If your king is killed then you lose and game ends.
+A king can move one step in any direction: horizontally, vertically, or diagonally.
+
+Queen (Q):
+A queen can move any number of steps in any direction: horizontally, vertically, or diagonally.
+
+Knight/Horse (H):
+A knight makes 'L' shape or 2+1 moves,
+i.e., two steps horizontally and one step vertically or two steps vertically and one step horizontally.
+Knight is the only piece that can jump over other pieces to land directly on the destination cell.
+
+Bishop (B):
+A bishop can move any number of steps diagonally
+
+Rook (R):
+A rook can move any number of steps either horizontally or vertically
+
+Pawn (P):
+Pawn has two separate moves.
+If it is moving to an empty square then it can move only 1 step forward vertically.
+If it is capturing an opponents piece then it can only move diagonally vertically.
+
+
+You can practice this question in either Java or Python
+Implement the below methods in Solution class:
+
+init(Helper08 helper, String[][] chessboard)
+helper has methods like, helper.print("") and helper.println("")
+which you can use for printing logs
+chessboard is the same String array that we saw above
+
+String move(int startRow, int startCol, int endRow, int endCol)
+User who has the current turn makes the move
+returns "invalid" for invalid move, (explain) empty string "" for success
+and "WH", "WQ" etc to represent the piece killed e.g. WH= white knight, WQ=white queen,
+
+int getGameStatus()
+returns 0 for game in progress,
+1 for white has won,
+2 for black has won
+
+int getNextTurn()
+returns 0 for white,
+1 for black,
+-1 for game already finished
+
+Input Example
+Game begins: init(helper, chessboard) : we saw the 8x8 chessboard array above
+Player with white pieces makes the first move.
+
+move(1, 5, 2, 5), returns '',
+White Pawn moves from (1, 5) to (2, 5)
+getNextTurn() returns 1
+getGameStatus() returns 0
+
+move(6, 6, 5, 6), returns '',
+Black Pawn moves from (6, 6) to (5, 6)
+getNextTurn() returns 0
+getGameStatus() returns 0
+
+move(2, 5, 3, 5), returns '',
+White Pawn moves from (2, 5) to (3, 5)
+getNextTurn() returns 1
+getGameStatus() returns 0
+
+move(6, 2, 5, 2), returns '',
+Black Pawn moves from (6, 2) to (5, 2)
+getNextTurn() returns 0
+getGameStatus() returns 0
+
+move(0, 1, 2, 2), returns '',
+White Knight moves from (0, 1) to (2, 2)
+getNextTurn() returns 1
+getGameStatus() returns 0
+
+move(6, 4, 5, 4), returns '',
+Black Pawn moves from (6, 4) to (5, 4)
+getNextTurn() returns 0
+getGameStatus() returns 0
+
+move(1, 7, 2, 7), returns '',
+White Pawn moves from (1, 7) to (2, 7)
+getNextTurn() returns 1
+getGameStatus() returns 0
+
+move(7, 6, 5, 7), returns '',
+Black Knight moves from (7, 6) to (5, 7)
+getNextTurn() returns 0
+getGameStatus() returns 0
+
+move(2, 2, 3, 4), returns '',
+White Knight moves from (2, 2) to (3, 4)
+getNextTurn() returns 1
+getGameStatus() returns 0
+
+move(6, 5, 5, 5), returns '',
+Black Pawn moves from (6, 5) to (5, 5)
+getNextTurn() returns 0
+getGameStatus() returns 0
+
+move(3, 4, 5, 5), returns 'BP',
+White Knight moves from (3, 4) to (5, 5) and kills (captures) Black Pawn
+getNextTurn() returns 1
+getGameStatus() returns 0
+
+move(6, 0, 5, 0), returns '',
+Black Pawn moves from (6, 0) to (5, 0)
+getNextTurn() returns 0
+getGameStatus() returns 0
+
+move(5, 5, 7, 4), returns 'BK',
+White Knight moves from (5, 5) to (7, 4) and kills (captures) Black King
+getNextTurn() returns -1
+getGameStatus() returns 1, i.e. player with white pieces has WON.

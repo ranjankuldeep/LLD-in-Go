@@ -1,0 +1,173 @@
+An e-commerce website like Amazon/Flipkart etc serve millions of orders every day.
+Many times customers face issues with the order they did and reach out to
+customer support of these websites to raise those issues.
+Customer support is nothing but a group of agents with skills for solving a set of issues and they solve customer's issues.
+
+Customer Issues can be classified into multiple types like order delayed, Payment Related, items being shipped to the wrong address etc.
+Design a customer issue resolution system which is used to assign customer's issues to agents and can track agent's work history.
+
+Low Level Design (object oriented design) implementation requirements :
+- - Your code will be tested in a MULTI-THREADED environment, so use thread safe data structures and handle synchronization properly.
+
+- Your solution should implement the following functions. Feel free to use the representation for objects you deem fit for the problem and the provided use cases.
+
+Method : void init(List[String] issueTypes, Helper03 helper)
+When this method is called, then initialize and reset all of your instance variables and system state.
+- System will have at max 20 different issueTypes, treat all strings in issue type as case-insensitive. e.g. payment failed, order delayed, need to change address etc
+- helper will be used for printing logs.
+
+Method : String createIssue(String issueId, String orderId, int issueType, String description)
+- This method will be used to create a new customer issue.
+- There can be upto 10^5 unique issues at most.
+- each orderId and issueId will be unique and non-empty
+- Each issue will have a issueType is index of strings from issueTypes array in init() method. It will always be valid.
+- description : e.g. Money deducted from bank but payment failed
+
+- returns below strings
+- "issue created" : when issue is successfully created
+- "issue already exists" : in case another issue with same issueId has already been created.
+- "invalid issue type" : in case issueType is not found in issueTypes list passed in init() method.
+
+Method : String addAgent(String agentId, List[Integer] expertise)
+- At most there will be 1000 agents.
+- agentId should be a unique, non-empty string, if duplicate then return "agent already exists"
+- expertise is comma separated, 0-based index of issueTypes used in init() method e.g "2,7,8",
+- they are the issues the agent is expert in,
+- returns "success" or "agent already exists"
+
+Method : String assignIssue(String issueId, int assignStrategy)
+This method should assign an issue to an agent which has the skill to solve issue's issueType
+- issueId is id of an issue which has already been created and which needs to be assigned to the agent.
+- below are various types of strategies used for assigning issues to agents.
+- assignStrategy= 0 : Assign an agent which has lowest number of total issues open. Used For efficient processing.
+- assignStrategy= 1 : Assign an agent who has the most experience in resolving issue of type in issueId. For resolving issues which may require insight and more expertise.
+- assignStrategy= 2 : Assign an agent who has the least number of open issues of issue type in [issueId]. Used to training agents on a particular issueType.
+Note :
+- In all the above strategies if there are multiple such agents assign issue to any one of them.
+- An agent can be assigned an issue only if they have an expertise with that issue.
+- returns id of the agent or "issue doesn't exist", "issue already assigned", "agent with expertise doesn't exist"
+
+Method : resolveIssue(String issueId, String resolution)
+This method resolves the issue,
+- issue is resolved by the agent who was assigned the issue with issueId
+- issueId will refer to an existing issue. will always be valid.
+- resolution can be e.g. money refunded to customer.
+
+Method : List[String] getAgentHistory(String agentId)
+This method should returns list of issueId's of issues resolved by agent or in other words list of issues assigned to agent with which are in resolved state now.
+- return an empty list in case agent doesn't exists or no issue has been resolved yet by the agent
+
+Example : Read the below method calls to get a better understanding of how this works.
+
+init(["wrong product received", "order delayed", "cancel delivery", "damaged product received"], helper)
+
+addAgent(A-0, [0, 1, 3]) : Created agent Id : A-0, skills : [0, 1, 3]
+addAgent(A-1, [1, 2, 3]) : Created agent Id : A-1, skills : [1, 2, 3]
+addAgent(A-2, [1, 3]) : Created agent Id : A-2, skills : [1, 3]
+
+
+createIssue('I-0', 'Order-0, 3', 'sample issue description : damaged product received') : returns "issue created"
+assignIssue('I-0', 1) assign strategy : 1 i.e. agent with most resolved issues of issueType 3
+Total 3 agent(s) are there with 0 resolved issues of issueType 3 : damaged product received
+agentId's are : [A-0, A-1, A-2]
+Issue I-0 is assigned to agent A-1
+
+createIssue('I-1', 'Order-1, 1', 'sample issue description : order delayed') : returns "issue created"
+assignIssue('I-1', 1) assign strategy : 1 i.e. agent with most resolved issues of issueType 1
+Total 3 agent(s) are there with 0 resolved issues of issueType 1 : order delayed
+agentId's are : [A-0, A-1, A-2]
+Issue I-1 is assigned to agent A-1
+
+createIssue('I-2', 'Order-2, 1', 'sample issue description : order delayed') : returns "issue created"
+assignIssue('I-2', 0) assign strategy : 0 i.e. agent with lowest open issues
+Total 2 agent(s) are there with 0 open issues agentId's are : [A-0, A-2]
+Issue I-2 is assigned to agent A-2
+
+createIssue('I-3', 'Order-3, 2', 'sample issue description : cancel delivery') : returns "issue created"
+assignIssue('I-3', 2) assign strategy : 2 i.e. agent with least open issues of issue type : 2
+Total 1 agent(s) are there with 0 open issues of issueType 2 : cancel delivery
+agentId's are : [A-1]
+Issue I-3 is assigned to agent A-1
+
+resolveIssue('I-3', 'resolved')
+Issue Details issueId : I-3, issue type index : 2, issue status : resolved by agent A-1, issue type : cancel delivery
+getAgentHistory('A-1') returns [I-3]
+
+createIssue('I-4', 'Order-4, 3', 'sample issue description : damaged product received') : returns "issue created"
+assignIssue('I-4', 2) assign strategy : 2 i.e. agent with least open issues of issue type : 3
+Total 2 agent(s) are there with 0 open issues of issueType 3 : damaged product received
+agentId's are : [A-0, A-2]
+Issue I-4 is assigned to agent A-0
+
+createIssue('I-5', 'Order-5, 1', 'sample issue description : order delayed') : returns "issue created"
+assignIssue('I-5', 0) assign strategy : 0 i.e. agent with lowest open issues
+Total 2 agent(s) are there with 1 open issues agentId's are : [A-0, A-2]
+Issue I-5 is assigned to agent A-0
+
+resolveIssue('I-1', 'resolved')
+Issue Details issueId : I-1, issue type index : 1, issue status : resolved by agent A-1, issue type : order delayed
+getAgentHistory('A-1') returns [I-1, I-3]
+
+resolveIssue('I-5', 'resolved')
+Issue Details issueId : I-5, issue type index : 1, issue status : resolved by agent A-0, issue type : order delayed
+getAgentHistory('A-0') returns [I-5]
+
+resolveIssue('I-4', 'resolved')
+Issue Details issueId : I-4, issue type index : 3, issue status : resolved by agent A-0, issue type : damaged product received
+getAgentHistory('A-0') returns [I-5, I-4]
+
+resolveIssue('I-0', 'resolved')
+Issue Details issueId : I-0, issue type index : 3, issue status : resolved by agent A-1, issue type : damaged product received
+getAgentHistory('A-1') returns [I-1, I-0, I-3]
+
+resolveIssue('I-2', 'resolved')
+Issue Details issueId : I-2, issue type index : 1, issue status : resolved by agent A-2, issue type : order delayed
+getAgentHistory('A-2') returns [I-2]
+
+createIssue('I-6', 'Order-6, 3', 'sample issue description : damaged product received') : returns "issue created"
+assignIssue('I-6', 2) assign strategy : 2 i.e. agent with least open issues of issue type : 3
+Total 3 agent(s) are there with 0 open issues of issueType 3 : damaged product received
+agentId's are : [A-0, A-1, A-2]
+Issue I-6 is assigned to agent A-0
+
+createIssue('I-7', 'Order-7, 3', 'sample issue description : damaged product received') : returns "issue created"
+assignIssue('I-7', 2) assign strategy : 2 i.e. agent with least open issues of issue type : 3
+Total 2 agent(s) are there with 0 open issues of issueType 3 : damaged product received
+agentId's are : [A-1, A-2]
+Issue I-7 is assigned to agent A-2
+
+createIssue('I-8', 'Order-8, 1', 'sample issue description : order delayed') : returns "issue created"
+assignIssue('I-8', 2) assign strategy : 2 i.e. agent with least open issues of issue type : 1
+Total 3 agent(s) are there with 0 open issues of issueType 1 : order delayed
+agentId's are : [A-0, A-1, A-2]
+Issue I-8 is assigned to agent A-1
+
+resolveIssue('I-7', 'resolved')
+Issue Details issueId : I-7, issue type index : 3, issue status : resolved by agent A-2, issue type : damaged product received
+getAgentHistory('A-2') returns [I-7, I-2]
+
+resolveIssue('I-8', 'resolved')
+Issue Details issueId : I-8, issue type index : 1, issue status : resolved by agent A-1, issue type : order delayed
+getAgentHistory('A-1') returns [I-8, I-1, I-0, I-3]
+
+createIssue('I-9', 'Order-9, 0', 'sample issue description : wrong product received') : returns "issue created"
+assignIssue('I-9', 0) assign strategy : 0 i.e. agent with lowest open issues
+Total 1 agent(s) are there with 1 open issues agentId's are : [A-0]
+Issue I-9 is assigned to agent A-0
+
+resolveIssue('I-6', 'resolved')
+Issue Details issueId : I-6, issue type index : 3, issue status : resolved by agent A-0, issue type : damaged product received
+getAgentHistory('A-0') returns [I-5, I-4, I-6]
+
+resolveIssue('I-9', 'resolved')
+Issue Details issueId : I-9, issue type index : 0, issue status : resolved by agent A-0, issue type : wrong product received
+getAgentHistory('A-0') returns [I-5, I-4, I-6, I-9]
+
+createIssue('I-10', 'Order-10, 2', 'sample issue description : cancel delivery') : returns "issue created"
+assignIssue('I-10', 0) assign strategy : 0 i.e. agent with lowest open issues
+Total 1 agent(s) are there with 0 open issues agentId's are : [A-1]
+Issue I-10 is assigned to agent A-1
+
+resolveIssue('I-10', 'resolved')
+Issue Details issueId : I-10, issue type index : 2, issue status : resolved by agent A-1, issue type : cancel delivery
+getAgentHistory('A-1') returns [I-10, I-8, I-1, I-0, I-3]

@@ -1,0 +1,65 @@
+Write code for low level design of a text editor/word processor like microsoft word, WordPad etc.
+We have a text document which can have any number of rows and any number of columns. Each character in the document has its own style. Style parameters for any character are font name, font size, bold, italic.
+
+Implement the below methods in Solution class:
+
+init(Helper09 helper)
+- init() is our constructor/initializer
+- helper has methods like, helper.print("") and helper.println("")
+    which you can use for printing logs,
+    System.out.println logs will not be visible.
+
+addCharacter(int row, int column, char ch,
+    String fontName, int fontSize,
+        boolean isBold, boolean isItalic)
+- Adds character at the given row and column.
+- Existing characters are pushed to right.
+- e.g. row-0 is "abcd" ,
+    after addCharacter(0,2,'p',"Tahoma",12,false, true)
+    row-0 becomes "abpcd"
+- 0<=row,column<=1000
+- 1<=row*column<=1000,000
+- ch will be from 'a'-'z', '0'-'9', ','(comma), ' '(space)
+- Add more rows if currently there are fewer rows than row
+- If there are fewer columns in row than column then,
+    simply append character after the rightmost column.
+
+String getStyle(int row, int col)
+- returns style of the character at row, col
+- returns empty string "" if no character exists at row, col
+- return example: "j-Arial Black-14-b-i" or "j-Arial Black-14-i"
+    character='j', font name= Arial Black, font size = 14
+    'b' is present if isBold=true and
+    'i' is present if isItalic is true
+
+String readLine(int row)
+- returns all characters which are in row as string
+- return example : "abcd"
+- if there are not characters added in row then
+    empty string "" is returned.
+
+boolean deleteCharacter(int row, int col)
+- returns true if there is a character at row,col and
+    it is successfully deleted
+- returns false otherwise.
+- characters to the left of column are moved 1 place left.
+    e.g. row-0 is "abcde", and after deleteCharacter(0, 2)
+    it becomes "abde"
+
+Input Example
+Solution obj= new Solution();
+obj.init(helper)
+obj.addCharacter(0, 0, 'g', 'Cambria', 17, true, true)
+obj.addCharacter(1, 0, 'y', 'Century Gothic', 14, true, true)
+obj.addCharacter(1, 1, 'h', 'Courier New', 22, false, false)
+obj.addCharacter(1, 2, 'y', 'Georgia', 14, false, false)
+
+obj.getStyle(0,0) returns 'g-Cambria-17-b-i'
+obj.readLine(0) returns 'g'
+obj.addCharacter(0, 0, 'q', 'Arial', 21, false, true)
+obj.readLine(0) returns 'qg'
+
+obj.readLine(1) returns 'yhy'
+obj.deleteCharacter(1, 1) returns true
+obj.readLine(1) returns 'yy'
+obj.deleteCharacter(1, 4) returns false

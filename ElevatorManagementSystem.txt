@@ -1,0 +1,122 @@
+Write code for low level design of an Elevator Management System consisting of multiple lifts.
+All the lifts are in the same building which has multiple floors.
+
+Lifts are numbered 0 to lifts-1 and floors are numbered 0 to floors -1.
+In a lift, maximum 10 people can be there at a given time.
+
+For simplicity lets assume that each lift takes exactly one second (see tick() method below) to go to next floor while coming up or going down.
+Also, when a lift stops on a floor, then time taken for one or more people to come in or go out of lift is zero seconds (or 0 tick()).
+
+You have to code below methods.
+
+METHOD : void init(int floors, int lifts, Helper02 helper) :
+Initialize/reinitialize the elevator system and reset all your instance variables.
+use helper.print() and helper.println() to print logs else logs won't be visible to you.
+
+METHOD : int requestLift(int startFloor, int destinationFloor) :
+On each floor users will enter destination floor on a keypad.
+startFloor is the floor user is currently at.
+Your code should return lift index from 0 to lifts-1 or -1 in case none of the lifts can be assigned to user.
+The Lift assigned to request must be both ELIGIBLE and MOST OPTIMAL.
+
+MOST OPTIMAL : Means the lift assigned must take minimum time as compared to other lifts to reach startFloor based on the requests it is currently serving,
+If there are multiple such lifts, return the lift at smallest index (0 to lifts-1).
+
+ELIGIBLE : Below are some reasons as to when a lift can't be assigned to a user :
+
+- Lift has already passed the user e.g requestLift(2, 8) i.e. user is requesting to go up from floor 2 to floor 8 and lift is also going up and is at floor 4 right now.
+Another case : requestLift(18,0) i.e. User has requested to go down from floor 18 to floor 0 and lift is also going down and is at floor 16 right now.
+In both above cases given lift can't be assigned to requests.
+
+- There are already requests in opposite direction and assigning lift to new request will increase wait time for people waiting in opposite direction.
+e.g. lift is going up, is at floor 8 and requests it is serving are [(0,9), (7,12), (6,10), (10,6), (12, 8), (18,9)], Below are some new requests :
+
+requestLift(20, 0) : NOT ELIGIBLE, it will increase wait time for [(10,6), (12, 8), (18,9)],
+earlier lift had to go up till floor 18 before coming down, but now it has to go up till floor 20.
+requestLift(9, 22) : NOT ELIGIBLE, it will increase wait time for [(10,6), (12, 8), (18,9)],
+requestLift(16, 0) : ELIGIBLE
+
+METHOD : tick() :
+This method is called every second so that you can appropriately update lift states
+use this method to track time/passage of each second rather than java.util.Date().time
+
+METHOD : getLiftStates() :
+returns a string list of size lifts, each item representing floor and direction of lift it will be an array of Strings in below format
+
+currentFloor-direction
+0<= currentFloor < this.floors
+direction : U for up, D for down, I for idle
+
+e.g. ["4-U", "12-D", "0-I"]
+lift 0 is at floor 4 and is going UP,
+lift 1 is at floor 12 and is going DOWN,
+lift 2 is at floor 0 and is IDLE.
+
+METHOD : getNumberOfPeopleOnLift(int liftId) :
+returns how many people are on a given lift right now.
+0 <= liftId < lifts
+
+METHOD : getLiftsStoppingOnFloor(int floor, char moveDirection) :
+returns list of lift indexes which are going to stop on the given floor,
+based on requests till now.
+moveDirection : U for up, D for down, I for idle
+This method is used for informing users about the lifts which will be stopping on their floor.
+
+Note :
+This question will be tested in a SINGLE THREADED environment.
+All Lifts will be IDLE at ground floor i.e. 0th floor in the beginning.
+2<= lifts <=100
+2<= floors <=200
+
+Input Example :
+Below is a sequence of method calls to help you understand better.
+
+Solution obj=new Solution();
+obj.init(6, 2) :
+Initialize a building with 6 floors and 2 lifts.
+
+
+obj.requestLift(0,3) : returns Lift 0
+Lift 0 : floor 0, IDLE , Requests : []
+Calculation to reach floor 0 : 0 seconds
+
+
+obj.tick()
+Lift 0 : floor 1, going UP , Requests : [(0, 3)]
+Lift 1 : floor 0, IDLE , Requests : []
+
+obj.requestLift(0,2) : returns Lift 1
+Lift 1 : floor 0, IDLE , Requests : []
+Calculation to reach floor 0 : 0 seconds
+
+
+obj.tick()
+Lift 0 : floor 2, going UP , Requests : [(0, 3)]
+Lift 1 : floor 1, going UP , Requests : [(0, 2)]
+
+obj.requestLift(0,5) : returns -1, i.e none of the lifts can be assigned this request.
+Lift States :
+Lift 0 : floor 2, going UP , Requests : [(0, 3)]
+Lift 1 : floor 1, going UP , Requests : [(0, 2)]
+
+obj.requestLift(1,0) : returns Lift 1
+Lift 1 : floor 1, going UP , Requests : [(0, 2)]
+Calculation to reach floor 1 : Current floor : 1, going UP.
+Below is Calculation for time taken to reach floor 1, direction: D,
+Lift will go up till floor 2 and then come down to floor 1.
+2 (maximum floor to go up) - 1 (current floor lift is at)
++ 2 (max floor to go up) - 1 (floor we want the lift to reach)
+= 2 seconds
+
+
+obj.tick()
+Lift 0 : floor 3, IDLE , Requests : []
+Lift 1 : floor 2, going DOWN , Requests : [(1, 0)]
+
+obj.tick()
+Lift 0 : floor 3, IDLE , Requests : []
+Lift 1 : floor 1, going DOWN , Requests : [(1, 0)]
+
+obj.tick()
+Lift 0 : floor 3, IDLE , Requests : []
+Lift 1 : floor 0, IDLE , Requests : []
